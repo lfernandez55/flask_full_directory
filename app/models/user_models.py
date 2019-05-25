@@ -47,7 +47,7 @@ class UsersRoles(db.Model):
     role_id = db.Column(db.Integer(), db.ForeignKey('roles.id', ondelete='CASCADE'))
 
 
-# # Define the User registration form xx
+# # Define the User registration form 
 # # It augments the Flask-User RegisterForm with additional fields
 # class MyRegisterForm(RegisterForm):
 #     first_name = StringField('First name', validators=[
