@@ -26,6 +26,6 @@ In categories.html changed
 to:
 <div><h2><a href="{{ url_for('main.books_in_cat', categoryID=category['id']) }}">
 ----------
-Added CSRF token to addbook form
+Added CSRF token to addbook form x
 https://flask-wtf.readthedocs.io/en/stable/csrf.html
 ----------
