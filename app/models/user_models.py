@@ -47,8 +47,23 @@ class UsersRoles(db.Model):
     role_id = db.Column(db.Integer(), db.ForeignKey('roles.id', ondelete='CASCADE'))
 
 
-# # Define the User registration form 
-# # It augments the Flask-User RegisterForm with additional fields
+class Category(db.Model):
+    __tablename__ = 'Category'
+    id = db.Column(db.Integer(), primary_key=True)
+    description = db.Column(db.String(50), nullable=False, server_default=u'', unique=True)
+
+class Book(db.Model):
+    __tablename__ = 'Book'
+    id = db.Column(db.Integer(), primary_key=True)
+    author = db.Column(db.String(50), nullable=False, server_default=u'', unique=False)
+    title = db.Column(db.String(100), nullable=False, server_default=u'', unique=False)
+    isbn = db.Column(db.Integer(), nullable=False, server_default=u'', unique=True)
+    description = db.Column(db.String(250), nullable=False, server_default=u'', unique=False)
+    category_id = db.Column(db.Integer(), nullable=False, server_default=u'', unique=False)
+
+
+# Define the User registration form
+# It augments the Flask-User RegisterForm with additional fields
 # class MyRegisterForm(RegisterForm):
 #     first_name = StringField('First name', validators=[
 #         validators.DataRequired('First name is required')])

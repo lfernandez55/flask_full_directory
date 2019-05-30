@@ -35,5 +35,5 @@ USER_EMAIL_SENDER_NAME = 'Your name'
 USER_EMAIL_SENDER_EMAIL = 'yourname@gmail.com'
 
 ADMINS = [
-    '"Admin One" <admin1@gmail.com>',
+    '"Admin One" <luke.fernandez@gmail.com>',
     ]

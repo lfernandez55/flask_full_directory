@@ -11,3 +11,4 @@ The code has been organized into the following sub-directories:
     templates    # Jinja2 HTML template files
     views        # View functions
 
+--------------------------

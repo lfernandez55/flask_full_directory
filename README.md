@@ -119,3 +119,47 @@ With thanks to the following Flask extensions:
 ## Authors
 
 - Ling Thio -- ling.thio AT gmail DOT com
+
+
+------------------------------------------
+
+
+
+
+The first time you install you do:
+python -m venv venv
+venv\Scripts\activate.bat
+pin install -r requirements.txt
+python manage.py init_db  (this adds the sql db to the root folder)
+python manage.py runserver
+Open browser
+
+After adding the Category and Book models you do:
+
+Delete db from file explorer
+python manage.py init_db  (this adds the sql db to the root folder)
+python manage.py runserver
+DELETE COOKIES! (https://github.com/lingthio/Flask-User/issues/238)
+Open browser
+
+This app comes from https://github.com/lingthio/Flask-User-starter-app.  According to the readme doc this is the users you can use:
+You can make use of the following users:
+
+email user@example.com with password Password1.
+email admin@example.com with password Password1.
+---------
+Import content from flask_book_plus_auth
+
+Replace  venv\Lib\site-packages\flask_user\templates\flask_user_layout.html
+
+Add templates to app/templates folder.  
+Rename app/templates/templates to app/templates/books
+
+Create new routes in app:
+  Import from app.py
+  Change execute_sql to db.engine.execute_sql
+  Make minor modifications to sql statements
+  Change @app.route  to @main_blueprint.route
+  Prepend "/books" to route url
+
+  -
