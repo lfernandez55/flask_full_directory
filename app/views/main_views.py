@@ -13,25 +13,13 @@ from app.models.user_models import UserProfileForm
 
 main_blueprint = Blueprint('main', __name__, template_folder='templates')
 
-# # The Home page is accessible to anyone
-# @main_blueprint.route('/')
-# def home_page():
-#     return render_template('main/home_page.html')
-#
-#
+
 # The User page is accessible to authenticated users (users that have logged in)
 @main_blueprint.route('/member')
 @login_required  # Limits access to authenticated users
 def member_page():
-    return render_template('main/user_page.html')
-
-
-# The Admin page is accessible to users with the 'admin' role
-# @main_blueprint.route('/admin')
-# @roles_required('admin')  # Limits access to users with the 'admin' role
-# def admin_page():
-#     return render_template('main/admin_page.html')
-
+    # return render_template('main/user_page.html')
+    return render_template('main/index.html')
 
 @main_blueprint.route('/main/profile', methods=['GET', 'POST'])
 @login_required
@@ -65,11 +53,12 @@ def user_profile_page():
 @login_required
 def books():
     books = db.engine.execute('SELECT Category.description AS c_description, Book.description AS b_description, * FROM Category INNER JOIN Book ON Category.rowID=Book.category_id  ORDER BY c_description ASC')
-    print(len(books))
-    return render_template('all_books.html', books=books)
+    # print(len(books))
+    books = [dict(row) for row in books]
+    return render_template('main/all_books.html', books=books)
 
 @main_blueprint.route('/seedDB')
-@roles_required('Admin')
+@roles_required('admin')
 def seedDB():
 
     result = db.engine.execute("SELECT * FROM users")
@@ -92,7 +81,7 @@ def seedDB():
     return '<h1>DB Seeded!</h1>'
 
 @main_blueprint.route('/erase_DB')
-@roles_required('Admin')
+@roles_required('admin')
 def eraseDB():
         sqlQ = db.engine.execute('DELETE FROM Book')
         sqlQ = db.engine.execute('DELETE FROM Category')
@@ -108,56 +97,64 @@ def addbook():
         description = request.form['description']
         category_field = request.form['category']
 
-        sql = "SELECT rowid, * FROM Category WHERE description =" + category_field
+        sql = "SELECT * FROM Category WHERE description ='" + category_field + "'"
         categoryID = db.engine.execute(sql)
+        categoryID = [dict(row) for row in categoryID]
         if len(categoryID) == 0:
             sql = "INSERT INTO Category (description) VALUES (" + category_field   +")"
             returnStatus = db.engine.execute(sql)
-            returnQuery = execute_sql('SELECT last_insert_rowid()')
+            returnQuery = db.engine.execute('SELECT last_insert_rowid()')
+            returnQuery = [dict(row) for row in returnQuery]
             categoryID = returnQuery[0][0]
             # or, instead of above two lines use this one instead:
             # categoryID = execute_sql('SELECT rowid, * FROM Category WHERE description = ? ',[category_field])
         else:
-            categoryID = categoryID[0]['rowid']
+            categoryID = categoryID[0]['id']
 
-        sql = "INSERT INTO Book (author, title, isbn, description, category_id) VALUES ("+ author +","+ title +","+ isbn +","+ description +","+ category_id +")"
+
+        sql = "INSERT INTO Book (author, title, isbn, description, category_id) VALUES ('"+ author +"','"+ title +"',"+ isbn +",'"+ description +"',"+ str(categoryID) +")"
         returnStatus = db.engine.execute(sql)
 
 
-        return redirect(url_for('home_page'))
+        return redirect(url_for('main.home_page'))
 
     categories = db.engine.execute('SELECT * FROM Category ORDER BY description ASC')
-    return render_template('addbook.html', categories=categories)
+    return render_template('main/addbook.html', categories=categories)
 
 @main_blueprint.route('/categories')
 @login_required
 def categories():
     categories = db.engine.execute('SELECT rowid, * FROM Category ORDER BY description ASC')
+    categories = [dict(row) for row in categories]
     for cat in categories:
-        print(cat['rowid'])
-    return render_template('categories.html', categories=categories)
+
+        print(cat['id'])
+    return render_template('main/categories.html', categories=categories)
 
 @main_blueprint.route('/books_in_category/<categoryID>')
 @login_required
 def books_in_cat(categoryID):
     sql = "SELECT * FROM Category WHERE rowid =" + categoryID
     categories = db.engine.execute(sql)
+    categories = [dict(row) for row in categories]
     categoryDescription= categories[0]['description']
     sql= "SELECT * FROM Book WHERE category_id =" + categoryID
     books = db.engine.execute(sql)
+    books = [dict(row) for row in books]
     for book in books:
         print('dddd')
     print('debug')
-    return render_template('books_in_cat.html', books=books, categoryDescription=categoryDescription)
+    return render_template('main/books_in_cat.html', books=books, categoryDescription=categoryDescription)
 
 @main_blueprint.route('/sql', methods={'GET','POST'})
-@roles_required('Admin')
+@roles_required('admin')
 def sql():
     data=""
     if request.method == 'POST':
         sqlField = request.form['sqlField']
         try:
             returnVar = db.engine.execute(sqlField)
+            returnVar = [dict(row) for row in returnVar]
         except:
             data="An error occurred. . .look in the console"
         else:
@@ -173,9 +170,9 @@ def sql():
                         data= data + key + ":" + str(value) + "\n"
             except:
                  data="Data returned from sql was not iterable"
-        return render_template('sql.html',data=data)
+        return render_template('main/sql.html',data=data)
 
-    return render_template('sql.html',data=data)
+    return render_template('main/sql.html',data=data)
 
 @main_blueprint.route('/tinker')
 def tinker():
@@ -194,9 +191,9 @@ def home_page():
 
 # The Admin page requires an 'Admin' role.
 @main_blueprint.route('/admin')
-@roles_required('Admin')    # Use of @roles_required decorator
+@roles_required('admin')    # Use of @roles_required decorator
 def admin_page():
-    return render_template('admin.html')
+    return render_template('main/admin.html')
 
 
 @main_blueprint.context_processor
@@ -217,14 +214,10 @@ def utility_processor():
         print(sqlStatement)
         roleName = db.engine.execute(sqlStatement)
         # Casting the returned alchemy query object into a list
+        # See https://stackoverflow.com/questions/1958219/convert-sqlalchemy-row-object-to-python-dict
         roleName = [dict(row) for row in roleName]
-        print (type(roleName))
-        for role in roleName:
-            print('xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx')
-            print(role['name'])
-            print(roleName[0]['name'])
 
-        if len(roleName) > 0 and roleName[0]['name'] == 'Admin':
+        if len(roleName) > 0 and roleName[0]['name'] == 'admin':
             returnValue = 1
         else:
             returnValue = 0

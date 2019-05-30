@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block breadcrumb %}
-  <li class="breadcrumb-item"><a href="{{ url_for('home') }}">Home</a></li>
+  <li class="breadcrumb-item"><a href="{{ url_for('main.home_page') }}">Home</a></li>
   <li class="breadcrumb-item active">Custom SQL</li>
 {% endblock %}
 
@@ -13,6 +13,7 @@
   {#TODO:  to run other sql you have to put a commit=True in the
     sql statement.  But that should only be run  when its not a SELECt#}
   <form method="post" class="form">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
     <div class="form-group">
       <div class="row">
         <div class="col-xs-6">

@@ -2,7 +2,7 @@
 
 
 {% block breadcrumb %}
-  <li class="breadcrumb-item"><a href="{{ url_for('home') }}">Home</a></li>
+  <li class="breadcrumb-item"><a href="{{ url_for('main.home_page') }}">Home</a></li>
   <li class="breadcrumb-item active">All Books</li>
 {% endblock %}
 
@@ -10,9 +10,9 @@
 {% block page_content %}
 
 <ul class="nav navbar-nav">
-    <li><a href="{{ url_for('seedDB') }}" >Seed Books in Database</a></li>
-    <li><a href="{{ url_for('eraseDB') }}" >Erase Books from Database</a></li>
-    <li><a href="{{ url_for('tinker') }}" >Tinker</a></li>
-    <li><a href="{{ url_for('sql') }}" >SQL</a></li>
+    <li><a href="{{ url_for('main.seedDB') }}" >Seed Books in Database</a></li>
+    <li><a href="{{ url_for('main.eraseDB') }}" >Erase Books from Database</a></li>
+    <li><a href="{{ url_for('main.tinker') }}" >Tinker</a></li>
+    <li><a href="{{ url_for('main.sql') }}" >SQL</a></li>
 </ul
 {% endblock %}

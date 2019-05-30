@@ -12,3 +12,20 @@ The template files are organized into the following directories:
 Flask-User makes use of standard template files that reside in  
 `PATH/TO/VIRTUALENV/lib/PYTHONVERSION/site-packages/flask_user/templates/flask_user/`.  
 These standard templates can be overruled by placing a copy in the `app/templates/flask_user/` directory.
+
+-------
+Changed this view:
+
+def member_page():
+    # return render_template('main/user_page.html')
+
+-----------------
+In categories.html changed
+
+<div><h2><a href="{{ url_for('main.books_in_cat', categoryID=category['rowid']) }}">
+to:
+<div><h2><a href="{{ url_for('main.books_in_cat', categoryID=category['id']) }}">
+----------
+Added CSRF token to addbook form
+https://flask-wtf.readthedocs.io/en/stable/csrf.html
+----------
