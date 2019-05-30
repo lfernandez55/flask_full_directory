@@ -162,4 +162,4 @@ Create new routes in app:
   Change @app.route  to @main_blueprint.route
   Prepend "/books" to route url
 
-  -
+In context processor it looks like sqlalchemy isn't returning lists like the other query engine I was using.  So the list returned query object has to be cast into a list (see utility_processor view) 

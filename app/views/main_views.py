@@ -216,6 +216,7 @@ def utility_processor():
         sqlStatement = "SELECT roles.name FROM roles JOIN users_roles ON roles.id=users_roles.role_id JOIN users ON users.id=users_roles.user_id WHERE users.email='" + user + "' AND roles.name='admin'"
         print(sqlStatement)
         roleName = db.engine.execute(sqlStatement)
+        # Casting the returned alchemy query object into a list
         roleName = [dict(row) for row in roleName]
         print (type(roleName))
         for role in roleName:
