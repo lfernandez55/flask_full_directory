@@ -148,18 +148,30 @@ You can make use of the following users:
 email user@example.com with password Password1.
 email admin@example.com with password Password1.
 ---------
-Import content from flask_book_plus_auth
+After getting cloning the repo (https://github.com/lingthio/Flask-User-starter-app) the general idea is to modify it so it runs like my repo flask_book_plus_auth:
 
-Replace  venv\Lib\site-packages\flask_user\templates\flask_user_layout.html
+CUSTOMIZE FLASK_USER (https://flask-user.readthedocs.io/en/latest/customizing_forms.html)
+  Create app/templates/flask_user folder
+  Add templates from venv flask_user library
+  Replace app/layout.html with new one (modify paths in nav slightly)
+  Modify app/flask_user/common_base so it extends layout.html instead of flask_user_layout
+  In app/settings.py change following lines to:
+    USER_AFTER_LOGIN_ENDPOINT = 'books.home_page'
+    USER_AFTER_LOGOUT_ENDPOINT = 'books.home_page'
 
-Add templates to app/templates folder.  
-Rename app/templates/templates to app/templates/books
+CREATE BOOK BLUEPRINT AND BOOKS TEMPLATE FOLDER
+
+Create app/templates/books folder.
+Add book templates to folder
+Modify paths in breadcrumbs of each template to point to books blueprint
 
 Create new routes in app:
-  Import from app.py
-  Change execute_sql to db.engine.execute_sql
-  Make minor modifications to sql statements
-  Change @app.route  to @main_blueprint.route
-  Prepend "/books" to route url
-
-In context processor it looks like sqlalchemy isn't returning lists like the other query engine I was using.  So the list returned query object has to be cast into a list (see utility_processor view) 
+  Get routes from from my repo flask_book_plus_auth app.py
+  Create a book_views.py blueprint (use main_views as model)
+      Because I'm using the alchemy sql engine I have to make changes
+      Change execute_sql to db.engine.execute_sql
+      Make minor modifications to sql statements
+        Unlike Tom's sql engine sqlalchemy wasn't returning a list of dictionaries.  So had to add extra code to do that conversion
+  Change @app.route  to @main_blueprint.route (??still necessary??)
+  Prepend "/books" to route url  (?? still necessary)
+Took context processor that allows isAdmin function to run in nav template and placed it in app/_init_.py/create_app function.  (If you leave it in the blueprint it wont be available to the flask_user views)
