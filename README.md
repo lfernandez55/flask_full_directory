@@ -175,3 +175,8 @@ Create new routes in app:
   Change @app.route  to @main_blueprint.route (??still necessary??)
   Prepend "/books" to route url  (?? still necessary)
 Took context processor that allows isAdmin function to run in nav template and placed it in app/_init_.py/create_app function.  (If you leave it in the blueprint it wont be available to the flask_user views)
+
+REMOVE main_views.py BLUEPRINT:
+Also need to remove reference to it in:
+views/_init__.py
+app/init__py
