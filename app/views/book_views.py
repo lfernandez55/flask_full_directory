@@ -25,6 +25,7 @@ def foo():
 def books():
     books = db.engine.execute('SELECT Category.description AS c_description, Book.description AS b_description, * FROM Category INNER JOIN Book ON Category.rowID=Book.category_id  ORDER BY c_description ASC')
     # print(len(books))
+    print('in all books')
     books = [dict(row) for row in books]
     return render_template('books/all_books.html', books=books)
 
@@ -164,36 +165,12 @@ def home_page():
 
 
 # The Admin page requires an 'Admin' role.
-@book_blueprint.route('/admin')
+@book_blueprint.route('/admin_books')
 @roles_required('admin')    # Use of @roles_required decorator
-def admin_page():
-    return render_template('books/admin.html')
+def admin_books():
+    return render_template('books/admin_books.html')
 
 
 @book_blueprint.context_processor
 def example():
     return dict(myexample='This is an example')
-
-
-@book_blueprint.context_processor
-def utility_processor():
-    def isAdmin(user):
-
-        roleName = db.engine.execute("SELECT * FROM Roles")
-        for role in roleName:
-            print('dddd')
-            print(role['name'])
-
-        sqlStatement = "SELECT roles.name FROM roles JOIN users_roles ON roles.id=users_roles.role_id JOIN users ON users.id=users_roles.user_id WHERE users.email='" + user + "' AND roles.name='admin'"
-        print(sqlStatement)
-        roleName = db.engine.execute(sqlStatement)
-        # Casting the returned alchemy query object into a list
-        # See https://stackoverflow.com/questions/1958219/convert-sqlalchemy-row-object-to-python-dict
-        roleName = [dict(row) for row in roleName]
-
-        if len(roleName) > 0 and roleName[0]['name'] == 'admin':
-            returnValue = 1
-        else:
-            returnValue = 0
-        return returnValue
-    return dict(isAdmin=isAdmin)

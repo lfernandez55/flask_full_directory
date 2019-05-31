@@ -13,13 +13,24 @@ from app.models.user_models import UserProfileForm
 
 main_blueprint = Blueprint('main', __name__, template_folder='templates')
 
+# The Home page is accessible to anyone
+@main_blueprint.route('/')
+def home_page():
+    # return render_template('main/home_page.html')
+    return render_template('books/index.html')
 
 # The User page is accessible to authenticated users (users that have logged in)
 @main_blueprint.route('/member')
 @login_required  # Limits access to authenticated users
 def member_page():
     # return render_template('main/user_page.html')
-    return render_template('main/index.html')
+    return render_template('main/home_page.html')
+
+# The Admin page is accessible to users with the 'admin' role
+@main_blueprint.route('/admin')
+@roles_required('admin')  # Limits access to users with the 'admin' role
+def admin_page():
+    return render_template('main/admin_page.html')
 
 @main_blueprint.route('/main/profile', methods=['GET', 'POST'])
 @login_required
