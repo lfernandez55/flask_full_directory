@@ -60,4 +60,3 @@ def session(db, request):
 @pytest.fixture(scope='session')
 def client(app):
     return app.test_client()
-

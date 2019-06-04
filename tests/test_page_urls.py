@@ -6,37 +6,43 @@ from __future__ import print_function  # Use print() instead of print
 from flask import url_for
 
 
-def test_page_urls(client):
+def test_page_urls0(client):
     # Visit home page
-    response = client.get(url_for('main.home_page'), follow_redirects=True)
+    response = client.get(url_for('books.home_page'), follow_redirects=True)
     assert response.status_code==200
+    # Try to visit categories page while not logged in
+    response = client.get(url_for('books.categories'), follow_redirects=True)
+    assert b"Sign in" in response.data, "Prob with auth; not requiring sign in'"
 
-    # Login as user and visit User page
+
+def test_page_urls1(client):
+    # Login as user and visit Categories page
     response = client.post(url_for('user.login'), follow_redirects=True,
-                           data=dict(email='user@example.com', password='Password1'))
+                           data=dict(email='member@example.com', password='Password1'))
     assert response.status_code==200
-    response = client.get(url_for('main.member_page'), follow_redirects=True)
-    assert response.status_code==200
+    response = client.get(url_for('books.categories'), follow_redirects=True)
+    assert b"Categories Page" in response.data, "Prob with auth; not allowing access to Categories page after sign in'"
 
-    # Edit User Profile page
-    response = client.get(url_for('main.user_profile_page'), follow_redirects=True)
-    assert response.status_code==200
-    response = client.post(url_for('main.user_profile_page'), follow_redirects=True,
-                           data=dict(first_name='User', last_name='User'))
-    response = client.get(url_for('main.member_page'), follow_redirects=True)
-    assert response.status_code==200
+    #While logged in try to access admin page you don't have privileges to access
+    response = client.get(url_for('books.admin_books'), follow_redirects=True)
+    assert b"You do not have permission to access" in response.data, "Prob with auth; not requiring admin privileges'"
 
-    # Logout
+
+def test_page_urls2(client):
+    # # Logout
     response = client.get(url_for('user.logout'), follow_redirects=True)
     assert response.status_code==200
+    #
 
-    # Login as admin and visit Admin page
+def test_page_urls3(client):
+    # # Login as admin and visit Admin page
     response = client.post(url_for('user.login'), follow_redirects=True,
                            data=dict(email='admin@example.com', password='Password1'))
     assert response.status_code==200
-    response = client.get(url_for('main.admin_page'), follow_redirects=True)
+    response = client.get(url_for('books.admin_books'), follow_redirects=True)
     assert response.status_code==200
-
-    # Logout
+    assert b"SQL" in response.data, "Prob with auth; not allowing access to admin page after login as admin'"
+    #
+    # # Logout
     response = client.get(url_for('user.logout'), follow_redirects=True)
     assert response.status_code==200
